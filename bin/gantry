@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+$stdout.sync = true
+$stderr.sync = true
+
+$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
+
+require 'optparse'
+require 'gantry'
+
+parser = OptionParser.new do |opts|
+  opts.banner = 'Usage: gantry [<options>]'
+
+  opts.on('-r', '--repeat FREQUENCY',
+    'How often to execute gantry checks: ie 5m, 2h, 1d: supports m(inutes), h(ours), d(ays)') do |repeat|
+    throw Exception.new('Only repeat frequencies of the form 50s|m|h are accepted.') unless repeat.match(/d+(m|M|h|H|d|D)/)
+    options[:repeat] = repeat
+  end
+
+  opts.on('-c', '--config PATH|URL', 'Path or URL to a yaml config for Gantry') do |config|
+    options[:config] = config
+  end
+end
+parser.parse!(ARGV)
